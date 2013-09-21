@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}
+{% endblock %}
+{% block center %}
+
+
+<div id = "parser" style="display:none">
+    爬虫<a href='/doparser'>parser</a>
+</div>
+<br>
+<h3>公司名称</h3>
+<br>
+{%for item in companys %}
+<div id = 'company_{{item.id}}'>
+    <a href ='/company/{{item.id}}'>{{item.Company_Name}}</a>
+</div>
+{% endfor %}
+<a href="/companys/1">更多公司信息>></a>
+<br>
+<br>
+<br>
+<h3>最新职位</h3>
+<br>
+{%for item in latest %}
+<div id = 'content_{{item.id}}'>
+    <a href ='/jobs/{{item.id}}'>{{item.position}}</a>
+</div>
+{% endfor %}
+<a href="/alljobs/1">更多职位信息>></a>
+
+{% endblock %}
+    

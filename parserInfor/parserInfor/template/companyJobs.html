@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}
+<h3>{{com_name}}</h3>
+<br>
+<h5>招聘信息</h5>
+<br>
+{% endblock %}
+{% block center %}
+
+{%for item in jobs %}
+<div id = 'content_{{item.id}}'>
+    <a href ='/jobs/{{item.id}}'>{{item.position}}</a>
+</div>
+{% endfor %}
+<br>
+<br>
+<div>
+{%if lastpage%}
+<a href="/company/{{com_id}}/jobs/{{lastpage}}">上一页</a>
+{%endif%}
+{%for page in lastpagenum%}
+    <a href="/company/{{com_id}}/jobs/{{page}}">{{page}}</a>
+{% endfor %}
+<a href="/company/{{com_id}}/jobs/{{current_page}}" style="color: #FF0000">{{current_page}}</a>
+{%for page in nextpagenum%}
+    <a href="/company/{{com_id}}/jobs/{{page}}">{{page}}</a>
+{% endfor %}
+{%if nextpage%}    
+<a href="/company/{{com_id}}/jobs/{{nextpage}}">下一页</a>
+{%endif%}
+</div>
+{% endblock %}
+    

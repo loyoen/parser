@@ -1,0 +1,68 @@
+<html>
+<title>CISIMI</title>
+<body>
+<script>
+String.prototype.Trim = function() 
+{ 
+    return this.replace(/(^\s*)|(\s*$)/g, ""); 
+}
+function checkName(){
+    var lname=document.getElementById("lname").value;
+    var lpasswd=document.getElementById("lpasswd").value;
+    $.ajax({
+        type: "POST",
+        data: "lname="+lname+"&"+"lpasswd="+lpasswd,
+        url: "/login/",
+        dataType: "json",
+        cache: false,
+        success: function(data){
+         with (data.message) {
+                        if(Trim()=='true'){ $("#login_message").html("登陆成功！");}
+                        if(Trim()=='false'){$("#login_message").html("登录失败");}
+                        if(Trim()=='except'){alert('有异常')}
+                    }
+         }
+        }); 
+}
+</script>
+ <div id="register">
+        <form action = '/register/' method = 'post'>
+            <input type="text" name="rname" placeholder="用户名" value={{rname}}>
+            <br>
+            <input type="text" name="remail" placeholder="邮箱" value={{remail}}>
+            <br>
+            <input type="text" name="rpasswd" placeholder="密码" value={{rpasswd}}> 
+            <br>
+            <input type="submit" value="注册"> 
+            <br>
+            {%if userexist%}
+            用户名:{{rname}}已存在,请重新注册...
+            <br>
+            {%endif%} 
+            {%if empty%}
+            用户名、邮箱、密码都不能为空...
+            {%endif%}
+            {%if notmail%}
+            请输入正确邮箱...
+            {%endif%}
+        </form>
+    </div>
+    <div id="login">    
+        <form action="/login" method="post">
+            <input type="text" id="lname" name="lname" placeholder="用户名" value={{lname}}>
+            <br>
+            <input type="text" id="lpasswd" name="lpasswd" placeholder="密码" value={{lpasswd}}>
+            <br>
+            <input type="submit" value="登陆">  
+            <br>
+            {%if logfail%}
+            用户名或密码错误，请重新登录...
+            <br>
+            {%endif%}
+        </form>
+    </div>
+    <div id="login_message">
+    </div>
+</body>
+</html>
+    

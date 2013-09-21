@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+{% block title %}
+{{name}}
+{% endblock %}
+{% block center %}
+<script>
+String.prototype.Trim = function() 
+{ 
+    return this.replace(/(^\s*)|(\s*$)/g, ""); 
+}
+function writeblog(){
+    var title=document.getElementById("title").value;
+    var content=document.getElementById("content").value;
+    $.ajax({
+        type: "POST",
+        data: "title="+title+"&"+"content="+content,
+        url: "/writeblog/",
+        dataType: "json",
+        cache: false,
+        success: function(data){
+         with (data.title) {
+                        $("#blogtitle").html(Trim());
+                    }
+                    with (data.content) {
+                        $("#blogcontent").html(Trim());
+                    }
+                    with (data.time) {
+                        $("#blogtime").html(Trim());
+                    }
+                    with (data.bloger) {
+                        $("#bloger").html(Trim());
+                    }
+         }
+        }); 
+}
+
+
+function search(){
+    var keywords=document.getElementById("keywords").value;
+    $.ajax({
+        type: "POST",
+        data: "keywords="+keywords,
+        url: "/search/",
+        dataType: "json",
+        cache: false,
+        success: function(data){
+            with (data.result)
+            {
+                var result = "";
+                alert(data.result[0].content);
+                for(var i=0;i<data.result.length;i++)
+                {
+                    result += data.result[i].title;
+                    result += "<br>";
+                    result += data.result[i].content;
+                    result += "<br>";
+                    result += "<br>";
+                }
+                alert(result);
+                $("#SearchResult").html(result);
+          }
+         }
+        }); 
+    }
+    
+function wb()
+{
+    document.getElementById('wb').innerHTML="<div id=\"blogtitle\"></div><div id=\"blogcontent\">    <form action=\"/login\" method=\"post\"><input type=\"text\" id=\"title\" name=\"title\" placeholder=\"title\"><br><input type=\"text\" id=\"content\" name=\"content\" placeholder=\"content\"><br><button id=\"btn1\" type=\"button\" onclick=writeblog()>发表</button> <br></form></div><div id=\"blogtime\"></div><div id=\"bloger\"></div>";
+}
+
+function ShowOrHide(keyid)
+{
+    var me = document.getElementById(keyid);
+    if(me.style.display=="block")
+    {
+        me.style.display="none";
+    }
+    else
+    {
+        me.style.display="block";
+    }
+}
+
+</script>
+
+<br>
+<div>
+    <h3>{{mycompany.Company_Name}}</h3>
+</div>
+
+<div id="url_list1">
+    <br>
+    <a href="javascript:void(0)" onclick='ShowOrHide("detail_company")'>公司简介</a>
+</div>
+
+<div id="detail_company" style="display:block; margin-left:10px;">
+    <br>
+    <div>
+        所属行业：{{mycompany.Profession}}
+    </div>
+    <br>
+    <div>
+        公司性质：{{mycompany.Category}}
+    </div>
+    <br>
+
+    <div>
+        公司规模：{{mycompany.Company_Size}}
+    </div>
+    <br>
+
+    <div>
+        公司简介：{{mycompany.Description}}
+    </div>
+    <br>
+</div>
+
+<div id="url_list2">
+    <br>
+    <a href="javascript:void(0)" onclick='ShowOrHide("detail_jobs")'>招聘信息</a>
+</div>
+
+<div id="detail_jobs" style="display:none; margin-left:20px;">
+    <br>公司职位&nbsp;
+    {%if manyJobs%}
+    <a href="/company/{{mycompany.id}}/jobs/1/">更多职位</a>
+    {%endif%}
+    <br>
+{%for item in infor %}
+<div>
+    <a href ="javascript:void(0)" onclick="ShowOrHide('jobs_{{item.id}}')">{{item.position}}</a>
+    <div id='jobs_{{item.id}}' style="display:none; margin-left:40px;">
+        招聘人数：{{item.numneeded}}<br>
+        工作地点：{{item.location}}<br>
+        职位描述：{{item.description}}<br>
+        要求：{{item.degree}}<br>
+        工作年限：{{item.yearsForWork}}<br>
+        招聘日期：{{item.startdate}} ---- {{item.enddate}}<br>
+        招聘网址：<a href={{item.url}}>{{item.url}}</a>
+    </div>
+</div>
+{% endfor %}
+</div>
+
+<div id="url_list3">
+    <br>
+    <a href="javascript:void(0)" onclick='ShowOrHide("detail_news")'>公司新闻</a>
+</div>
+<div id="detail_news" style="display:none; margin-left:20px;">
+</div>
+
+<div id="url_list4">
+    <br>
+    <a href="javascript:void(0)" onclick='ShowOrHide("detail_shopings")'>最新采购</a>
+</div>
+<div id="detail_shopings" style="display:none; margin-left:20px;">
+</div>
+
+<div id="url_list5">
+    <br>
+    <a href="javascript:void(0)" onclick='ShowOrHide("detail_stock")'>股市动态</a>
+</div>
+<div id="detail_stock" style="display:none; margin-left:20px;">
+</div>
+
+{% endblock %}
+    

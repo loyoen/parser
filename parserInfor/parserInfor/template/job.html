@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% block title %}
+{{name}}
+{% endblock %}
+{% block center %}
+<script>
+String.prototype.Trim = function() 
+{ 
+    return this.replace(/(^\s*)|(\s*$)/g, ""); 
+}
+function writeblog(){
+    var title=document.getElementById("title").value;
+    var content=document.getElementById("content").value;
+    $.ajax({
+        type: "POST",
+        data: "title="+title+"&"+"content="+content,
+        url: "/writeblog/",
+        dataType: "json",
+        cache: false,
+        success: function(data){
+         with (data.title) {
+                        $("#blogtitle").html(Trim());
+                    }
+                    with (data.content) {
+                        $("#blogcontent").html(Trim());
+                    }
+                    with (data.time) {
+                        $("#blogtime").html(Trim());
+                    }
+                    with (data.bloger) {
+                        $("#bloger").html(Trim());
+                    }
+         }
+        }); 
+}
+
+
+function search(){
+    var keywords=document.getElementById("keywords").value;
+    $.ajax({
+        type: "POST",
+        data: "keywords="+keywords,
+        url: "/search/",
+        dataType: "json",
+        cache: false,
+        success: function(data){
+            with (data.result)
+            {
+                var result = "";
+                alert(data.result[0].content);
+                for(var i=0;i<data.result.length;i++)
+                {
+                    result += data.result[i].title;
+                    result += "<br>";
+                    result += data.result[i].content;
+                    result += "<br>";
+                    result += "<br>";
+                }
+                alert(result);
+                $("#SearchResult").html(result);
+          }
+         }
+        }); 
+    }
+    
+function wb()
+{
+    document.getElementById('wb').innerHTML="<div id=\"blogtitle\"></div><div id=\"blogcontent\">    <form action=\"/login\" method=\"post\"><input type=\"text\" id=\"title\" name=\"title\" placeholder=\"title\"><br><input type=\"text\" id=\"content\" name=\"content\" placeholder=\"content\"><br><button id=\"btn1\" type=\"button\" onclick=writeblog()>发表</button> <br></form></div><div id=\"blogtime\"></div><div id=\"bloger\"></div>";
+}
+    
+</script>
+
+<br>
+<br>
+
+<div>
+    职位：{{infor.position}}    
+</div>
+<br>
+<div>
+    所属公司：<a href="/company/{{infor.companyname.id}}">{{infor.companyname.Company_Name}}</a>
+</div>
+
+<br>
+<div>
+    招聘人数：{{infor.numneeded}}
+</div>
+
+<br>
+<div>
+    工作地点：{{infor.location}}
+</div>
+
+<br>
+<div>
+    职位描述：{{infor.description}}
+</div>
+
+<br>
+<div>
+    要求：{{infor.degree}}
+</div>
+
+<br>
+<div>
+    工作年限：{{infor.yearsForWork}}
+</div>
+
+<br>
+<div>
+    招聘日期：{{infor.startdate}} ---- {{infor.enddate}}
+</div>
+
+
+<br>
+<div>
+    招聘网址：<a href={{infor.url}}>{{infor.url}}</a>
+</div>
+
+
+{% endblock %}
+    

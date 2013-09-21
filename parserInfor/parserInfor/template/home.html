@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}
+<h3>
+    <a href="/companys/1">所有公司</a>
+    <a href="/attention">我关注的公司</a>
+    &nbsp;
+    <a href="/search">搜索公司</a>
+</h3>
+
+<br>
+{% endblock %}
+{% block center %}
+<script>
+String.prototype.Trim = function() 
+{ 
+    return this.replace(/(^\s*)|(\s*$)/g, ""); 
+}
+function rmFavor(myid){
+    
+    $.ajax({
+        type: "POST",
+        data: "myid="+myid,
+        url: "/rmfavor/",
+        dataType: "json",
+        cache: false,
+        success: function(data){ 
+            with (data.message)
+            {
+                if(Trim()=='true'){
+                    var me = document.getElementById("content_"+myid);
+                    me.innerHTML=""
+                    
+                }
+            }
+         }
+        }); 
+}  
+</script>
+
+{%for item in favor_companys %}
+<div id = 'content_{{item.which.id}}'>
+    <a href='/company/{{item.which.id}}'>{{item.which.Company_Name}}</a>
+    <a href="javascript:void(0)" id="favor_{{item.which.id}}" onclick='rmFavor({{item.which.id}})'>取消关注</a>
+</div>
+{% endfor %}
+
+<div id="add">
+    <a href="/companys/1">添加关注的公司</a>
+</div>
+
+{% endblock %}
+    

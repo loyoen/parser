@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{% block title %}
+<script>
+    function showdiv(divname){
+        var div1 = document.getElementById("com_index");
+        var div2 = document.getElementById("com_attention");
+        var div3 = document.getElementById("com_search");
+        var me = document.getElementById(divname);
+        div1.style.display="none";
+        div2.style.display="none";
+        div3.style.display="none";
+        me.style.display="block";
+    }
+</script>
+<h3>
+    <a href="/companys/1">所有公司</a>
+    <a href="/attention">我关注的公司</a>
+    &nbsp;
+    <a href="/search">搜索公司</a>
+</h3>
+<br>
+{% endblock %}
+{% block center %}
+<script>
+String.prototype.Trim = function() 
+{ 
+    return this.replace(/(^\s*)|(\s*$)/g, ""); 
+}
+
+function addFavor(myid){
+    
+    $.ajax({
+        type: "POST",
+        data: "myid="+myid,
+        url: "/addfavor/",
+        dataType: "json",
+        cache: false,
+        success: function(data){ 
+            with (data.message)
+            {
+                if(Trim()=='true'){
+                    var me = document.getElementById("favor_"+myid);
+                    me.innerHTML="<b id='favor_" + myid + "' style=\"color:#FF0000\">已关注</b>"
+                }
+            }
+         }
+        }); 
+}
+function rmFavor(myid){
+    
+    $.ajax({
+        type: "POST",
+        data: "myid="+myid,
+        url: "/rmfavor/",
+        dataType: "json",
+        cache: false,
+        success: function(data){ 
+            with (data.message)
+            {
+                if(Trim()=='true'){
+                    var me = document.getElementById("favor_"+myid);
+                    me.innerHTML="<a href=\"javascript:void(0)\" id='favor_" + myid +"' onclick=\"addFavor('"+myid+"')\">添加关注</a>"
+                    
+                }
+            }
+         }
+        }); 
+    }  
+function search(){
+    var keywords=document.getElementById("keywords").value;
+    $.ajax({
+        type: "POST",
+        data: "keywords="+keywords,
+        url: "/search/",
+        dataType: "json",
+        cache: false,
+        success: function(data){
+            with (data.result)
+            {
+                var result = "";
+                for(var i=0;i<data.result.length;i++)
+                {
+                    result += "<a href=\"/company/" + data.result[i].company_id + "\">" + data.result[i].company_name + "</a>"
+                    result += "<br>";
+                    
+                    result += "<br>";
+                    result += "<br>";
+                }
+                alert(result);
+                $("#SearchResult").html(result);
+          }
+         }
+        }); 
+}
+</script>
+<div id="com_index" style="display:block;">
+{%for item in companys %}
+<div id = 'content_{{item.id}}'>
+    <a href='/company/{{item.id}}'>{{item.Company_Name}}</a> &nbsp;&nbsp;
+    {%if item.is_in_attention %}
+    <b id="favor_{{item.id}}" style="color:#FF0000">已关注</b>
+    {%else%}
+    <a href="javascript:void(0)" id="favor_{{item.id}}" onclick='addFavor({{item.id}})'>添加关注</a>
+    {%endif%}
+</div>
+{% endfor %}
+<br>
+<br>
+<div>
+{%if lastpage%}
+<a href="/companys/{{lastpage}}">上一页</a>
+{%endif%}
+{%for page in lastpagenum%}
+    <a href="/companys/{{page}}">{{page}}</a>
+{% endfor %}
+<a href="/companys/{{current_page}}" style="color: #FF0000">{{current_page}}</a>
+{%for page in nextpagenum%}
+    <a href="/companys/{{page}}">{{page}}</a>
+{% endfor %}
+{%if nextpage%}    
+<a href="/companys/{{nextpage}}">下一页</a>
+{%endif%}
+</div>
+</div>
+
+<div id="com_attention" style="display:none;">
+</div>
+
+<div id="com_search" style="display:none;">
+    <div id="ss">
+    <input type="text" id="keywords" name="keywords" placeholder="关键字">
+    <button id ="btn3" onclick=search()>搜索</button>
+    <div id="SearchResult">
+        {%for item in companys %}
+            <div id = 'content_{{item.id}}'>
+            <a href='/company/{{item.id}}'>{{item.Company_Name}}</a> &nbsp;&nbsp;
+            {%if item.id in test %}
+                <b id="favor_{{item.id}}" style="color:#FF0000">已关注</b>
+            {%else%}
+                <a href="javascript:void(0)" id="favor_{{item.id}}" onclick='addFavor({{item.id}})'>添加关注</a>
+            {%endif%}
+            </div>
+        {% endfor %}
+        <br>
+        <br>
+        <div>
+        {%if lastpage%}
+            <a href="/companys/{{lastpage}}">上一页</a>
+        {%endif%}
+        {%for page in lastpagenum%}
+            <a href="/companys/{{page}}">{{page}}</a>
+        {% endfor %}
+        <a href="/companys/{{current_page}}" style="color: #FF0000">{{current_page}}</a>
+        {%for page in nextpagenum%}
+            <a href="/companys/{{page}}">{{page}}</a>
+        {% endfor %}
+        {%if nextpage%}    
+            <a href="/companys/{{nextpage}}">下一页</a>
+        {%endif%}
+        </div>
+</div>
+    </div>
+    </div>
+</div>
+{% endblock %}
+    
